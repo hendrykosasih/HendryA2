@@ -78,6 +78,10 @@ BoxLayout:
                     id: add
                     text: 'Add New Entry'
                     on_release: app.add()
+                Button:
+                    text: 'Save'
+                    on_release: app.save_list()
+
             GridLayout:
                 id: itemsBox
                 cols: 2

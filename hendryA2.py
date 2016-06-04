@@ -129,5 +129,24 @@ class menu(App):
         self.mode = 1
         self.status = "Choose action from the left menu, then select items on the right"
 
+    def save_list(self):
+        saving = []
+        sortedlist = sorted(self.itemLists, key=self.itemLists.__getitem__)
+        for key in sortedlist:
+            temp = []
+            temp.append(key)
+            temp.append(self.itemLists[key][0])
+            temp.append(self.itemLists[key][1])
+            temp.append(self.itemLists[key][2])
+            saving.append(temp)
+        output_file = open("inventory.csv", "w")
+        for each in saving:
+            if each[3] == 'out':
+                print("{},{},{},out".format(each[0], each[1], each[2]), file=output_file)
+            elif each[3] == 'in':
+                print("{},{},{},in".format(each[0], each[1], each[2]), file=output_file)
+        print("{} items have been saved to inventory.csv".format(len(saving)))
+        output_file.close()
+
 menu().run()
 
