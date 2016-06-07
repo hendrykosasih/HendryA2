@@ -1,8 +1,8 @@
 BoxLayout:
     id: mainBox
     Popup:
-        id: popup
-        size_hint: (.7, .7)
+        id: popup_menu
+        size_hint: (.9, .9)
         title: "Add New Item"
         on_parent:
             if self.parent == mainBox: self.parent.remove_widget(self)
@@ -76,10 +76,10 @@ BoxLayout:
                     on_release: app.confirm()
                 Button:
                     id: add
-                    text: 'Add New Entry'
+                    text: 'Add New Item'
                     on_release: app.add()
                 Button:
-                    text: 'Save'
+                    text: 'Save and Exit'
                     on_release: app.save_list()
 
             GridLayout:

@@ -20,13 +20,13 @@ class menu(App):    #defining base class of kivy app
 
     def __init__(self):     #constructor of clasess
         super(menu, self).__init__()
-        itemLists ={}   #place(dictionary) to store item lists
+        item_lists ={}   #place(dictionary) to store item lists
         input_file = open("inventory.csv", "r")     #Open and read the csv file
         for items in input_file:
             items = items.strip().split(",")    #split the data with "," as the indentation
-            itemLists[items[0]]= [items[1], items[2], items[3]]     #assigned keyword for each item
+            item_lists[items[0]]= [items[1], items[2], items[3]]     #assigned keyword for each item
         self.mode = 1
-        self.itemLists = itemLists      #assigned self.itemLists to itemLists variable
+        self.item_lists = item_lists      #assigned self.item_lists to item_lists variable
         self.status = "Choose action from the left menu, then select items on the right"    #show the current situation
 
     def build(self):
@@ -38,13 +38,13 @@ class menu(App):    #defining base class of kivy app
     def create_entry_buttons(self):
         """This function sets the items button and background color"""
         self.root.ids.itemsBox.clear_widgets()
-        for key in self.itemLists:
+        for key in self.item_lists:
             temp_button = Button(text=key)
             temp_button.bind(on_release=self.press_item)    #action of pressing item button
-            if self.itemLists[key][2] == 'out':     #background highlighted in red color for unavailable item
-                temp_button.background_color = 1, 0, 0, 1   #red background
-            if self.itemLists[key][2] == 'in':      #background highlighted in green color for available item
-                temp_button.background_color = 0, 1, 0, 1   #green background
+            if self.item_lists[key][2] == 'out':     #background highlighted in red color for unavailable item
+                temp_button.background_color = 0, 1, 0, 0.5  #dark green background
+            if self.item_lists[key][2] == 'in':      #background highlighted in green color for available item
+                temp_button.background_color = 0, 1, 1, 2      #navy blue background
             self.root.ids.itemsBox.add_widget(temp_button)
 
     def press_item(self, instance):
@@ -52,25 +52,25 @@ class menu(App):    #defining base class of kivy app
         name = instance.text
         """Divided into several parts"""
         if self.mode == 1:  #show the description of items when the button is clicked
-            if self.itemLists[name][2] == 'in': #item is available
-                self.status = "{} ({}), ${} is in".format(name, self.itemLists[name][0], self.itemLists[name][1])
-            elif self.itemLists[name][2] == 'out':  #item is not available
-                self.status = "{} ({}), ${} is out".format(name, self.itemLists[name][0], self.itemLists[name][1])
+            if self.item_lists[name][2] == 'in': #item is available
+                self.status = "{} ({}), ${} is in".format(name, self.item_lists[name][0], self.item_lists[name][1])
+            elif self.item_lists[name][2] == 'out':  #item is not available
+                self.status = "{} ({}), ${} is out".format(name, self.item_lists[name][0], self.item_lists[name][1])
         elif self.mode == 2:    #for the hiring section
-            if self.itemLists[name][2] == 'in':     #hiring an available item
-                self.status = "Hiring {} for ${}".format(name, self.itemLists[name][1])     #show the chosen item and it's description
-            elif self.itemLists[name][2] == 'out':  #hiring an unavailable item
+            if self.item_lists[name][2] == 'in':     #hiring an available item
+                self.status = "Hiring {} for ${}".format(name, self.item_lists[name][1])     #show the chosen item and it's description
+            elif self.item_lists[name][2] == 'out':  #hiring an unavailable item
                 self.status = "Hiring 0 item for $0.00"     #because of unavailable item, 0 item is selected
         elif self.mode == 3:    #for the returning section
-            if self.itemLists[name][2] == 'out':    #returning an hired item
+            if self.item_lists[name][2] == 'out':    #returning an hired item
                 self.status = "Returning {} ".format(name)  #return item successfull and show returned name of item
-            elif self.itemLists[name][2] == 'in':   #returning an not hired item
+            elif self.item_lists[name][2] == 'in':   #returning an not hired item
                 self.status = "Returning 0 item"    #because item is not hired, there is nothing to be returned
 
     def add(self):
         """This function is to add new item to the app"""
         self.status = "Enter details for new item"  #ask user to enter new item details
-        self.root.ids.popup.open()      #a popup menu will be open
+        self.root.ids.popup_menu.open()      #a popup menu will be open
         self.mode = 'list'
 
     def save(self, addedName , addedDesc, addedPrice):
@@ -89,12 +89,12 @@ class menu(App):    #defining base class of kivy app
                 error = "Error"
                 check = float(error)
             else:
-                self.itemLists[addedName] = [addedDesc, addedPrice, 'in']       #description of new added item
+                self.item_lists[addedName] = [addedDesc, addedPrice, 'in']       #description of new added item
                 temp_button = Button(text=addedName)    #button available for this new added item
                 temp_button.bind(on_release=self.press_item)
                 temp_button.background_color = 0, 1, 0, 1       #set the background color of the new added item
                 self.root.ids.itemsBox.add_widget(temp_button)
-                self.root.ids.popup.dismiss()   #close the popup menu after creating new item
+                self.root.ids.popup_menu.dismiss()   #close the popup menu after creating new item
                 self.clear_fields()     #call clear fields function
                 self.status = "Choose action from the left menu, then select items on the right"
         except ValueError:
@@ -116,7 +116,7 @@ class menu(App):    #defining base class of kivy app
 
     def cancel(self):
         """This function is to dismiss and close the add new item menu and clear all of the fields inputs."""
-        self.root.ids.popup.dismiss()   #user clicks cancel button
+        self.root.ids.popup_menu.dismiss()   #user clicks cancel button
         self.clear_fields()     #call clear fields function
         self.status = "Choose action from the left menu, then select items on the right"
 
@@ -139,11 +139,11 @@ class menu(App):    #defining base class of kivy app
 
     def confirm(self):
         """This function is to confirm the user's selection for hire and return"""
-        for key in self.itemLists:
+        for key in self.item_lists:
             if key in self.status and 'Hiring' in self.status:
-                self.itemLists[key][2] = 'out'
+                self.item_lists[key][2] = 'out'
             elif key in self.status and 'Returning' in self.status:
-                self.itemLists[key][2] = 'in'
+                self.item_lists[key][2] = 'in'
         self.create_entry_buttons()  # call create entry buttons function
         self.mode = 1
         self.status = "Choose action from the left menu, then select items on the right"    #show action message
@@ -151,13 +151,13 @@ class menu(App):    #defining base class of kivy app
     def save_list(self):
         """This function is to save the changes of the data and write it on csv file"""
         saving = []     #create list for number of item
-        sortedlist = sorted(self.itemLists, key=self.itemLists.__getitem__)     #sort list
+        sortedlist = sorted(self.item_lists, key=self.item_lists.__getitem__)     #sort list
         for key in sortedlist:
             temp = []   #create list for item list
             temp.append(key)    #add key to temp variable
-            temp.append(self.itemLists[key][0])
-            temp.append(self.itemLists[key][1])
-            temp.append(self.itemLists[key][2])
+            temp.append(self.item_lists[key][0])
+            temp.append(self.item_lists[key][1])
+            temp.append(self.item_lists[key][2])
             saving.append(temp)     #add temp to saving list
         output_file = open("inventory.csv", "w")    #open csv file and write data on it
         for each in saving:
@@ -167,6 +167,7 @@ class menu(App):    #defining base class of kivy app
                 print("{},{},{},in".format(each[0], each[1], each[2]), file=output_file)
         print("{} items have been saved to inventory.csv".format(len(saving)))  #show user how many items saved to inventory
         output_file.close()     #close the file
+        exit()      #exit the program after click save button
 
 menu().run()
 #end of program
